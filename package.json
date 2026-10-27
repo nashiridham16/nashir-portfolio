@@ -1,0 +1,23 @@
+{
+  "name": "nashir-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@fontsource/petemoss": "^5.3.0",
+    "@fontsource/poppins": "^5.3.0",
+    "astro": "^7.4.2",
+    "lottie-web": "^5.13.0",
+    "lucide-static": "^1.62.0",
+    "simple-icons": "^16.36.0"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}

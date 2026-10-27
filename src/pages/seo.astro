@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Gallery from '../components/Gallery.astro';
+import { seoGallery } from '../data/site';
+---
+
+<BaseLayout title="SEO" description="Portofolio SEO Idham Ahmad Nashir: hasil optimasi website di Google Search Console.">
+  <PageHero before="Search" highlight="Engine" after="Optimization" image="/images/illustration-marketing.png" imageAlt="Ilustrasi SEO" />
+  <Gallery images={seoGallery} columns={3} label="Hasil SEO" />
+</BaseLayout>

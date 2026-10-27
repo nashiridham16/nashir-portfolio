@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Gallery from '../components/Gallery.astro';
+import { designGallery } from '../data/site';
+---
+
+<BaseLayout title="Graphic Design" description="Portofolio Graphic Design Idham Ahmad Nashir: poster, logo, banner, dan konten visual.">
+  <PageHero before="Graphic" highlight="Design" image="/images/illustration-graphic-design.png" imageAlt="Ilustrasi graphic design" />
+  <Gallery images={designGallery} columns={4} mobileColumns={2} label="Desain grafis" />
+</BaseLayout>

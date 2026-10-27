@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Gallery from '../components/Gallery.astro';
+import { certificateGallery } from '../data/site';
+---
+
+<BaseLayout title="Certification" description="Sertifikat keahlian Idham Ahmad Nashir dari bootcamp, course, dan sertifikasi.">
+  <PageHero before="Achievement" highlight="Certificate" image="/images/illustration-certificate.png" imageAlt="Ilustrasi sertifikat" />
+  <Gallery images={certificateGallery} columns={4} mobileColumns={2} label="Sertifikat" />
+</BaseLayout>

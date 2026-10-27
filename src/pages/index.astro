@@ -1,0 +1,1094 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Lottie from '../components/Lottie.astro';
+import {
+  site,
+  profileFacts,
+  profileText,
+  education,
+  quote,
+  experience,
+  stats,
+  softSkills,
+  hardSkills,
+  tools,
+  portfolioCategories,
+  organizations,
+  contacts,
+} from '../data/site';
+
+// Kontak dibagi dua kolom
+const contactCols = [contacts.filter((_, i) => i % 2 === 0), contacts.filter((_, i) => i % 2 === 1)];
+---
+
+<BaseLayout nav="home">
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-text reveal">
+        <h1>
+          <span>Idham Ahmad</span>
+          <span class="text-green">Nashir</span>
+        </h1>
+        <p class="tagline">{site.tagline}</p>
+        <div class="hero-actions">
+          <a href={site.whatsapp} class="btn" target="_blank" rel="noopener">
+            Collabs With Me <Icon name="rocket" size={16} />
+          </a>
+          <a href={site.cv} class="btn btn-outline" target="_blank" rel="noopener">
+            Download CV <Icon name="download" size={16} />
+          </a>
+        </div>
+      </div>
+      <div class="hero-photo reveal">
+        <img src="/images/profile-photo.png" alt="Foto Idham Ahmad Nashir" width="600" height="600" fetchpriority="high" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROFILE ============ -->
+  <section class="section profile" id="profil">
+    <div class="container profile-grid">
+      <ul class="facts">
+        {
+          profileFacts.map((f) => (
+            <li class="fact reveal">
+              <span class="fact-icon">
+                <Icon name={f.icon} size={22} />
+              </span>
+              <span class="fact-body">
+                <strong>{f.label}</strong>
+                <span>{f.value}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="profile-text reveal">
+        <h2 class="section-title">My Profile</h2>
+        <p class="lead"><span class="dropcap">H</span><Fragment set:html={profileText[0].slice(1)} /></p>
+        {profileText.slice(1).map((t) => <p set:html={t} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EDUCATION ============ -->
+  <section class="section education" id="edu">
+    <div class="container edu-grid">
+      <div>
+        <h2 class="section-title reveal">Education</h2>
+        <ol class="timeline">
+          {
+            education.map((e) => (
+              <li class="reveal">
+                <span class="t-logo">
+                  <img src={e.logo} alt={`Logo ${e.school}`} loading="lazy" width="64" height="64" />
+                </span>
+                <div>
+                  <h3>{e.school}</h3>
+                  {e.major && <p class="t-major">{e.major}</p>}
+                  <p class="t-period">{e.period}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+      <div class="edu-anim reveal">
+        <Lottie src="/animations/education.json" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUOTE ============ -->
+  <section class="quote-section">
+    <div class="container">
+      <figure class="quote-card reveal">
+        <span class="quote-mark" aria-hidden="true">“</span>
+        <blockquote>{quote.text}</blockquote>
+        <figcaption>{quote.author}</figcaption>
+        <a href={site.twitter} class="btn" target="_blank" rel="noopener">More Quotes <Icon name="twitter" size={14} /></a>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ EXPERIENCE ============ -->
+  <section class="section experience" id="exp">
+    <div class="container">
+      <h2 class="section-title reveal">Experience</h2>
+      <div class="exp-list">
+        {
+          experience.map((job) => (
+            <article class="job reveal">
+              <header class="job-head">
+                <span class="job-logo">
+                  <img src={job.logo} alt={`Logo ${job.company}`} loading="lazy" width="56" height="56" />
+                </span>
+                <div>
+                  <h3>{job.company}</h3>
+                  <p class="job-role">{job.role}</p>
+                  <p class="job-period">{job.period}</p>
+                </div>
+              </header>
+              <ul class="job-points">
+                {job.points.map((p) => (
+                  <li>
+                    <Icon name="leaf" size={14} />
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section class="section stats-section" id="unik">
+    <div class="container">
+      <div class="stats-card reveal">
+        <ul class="stats">
+          {
+            stats.map((s) => (
+              <li>
+                <strong>
+                  <span data-count={s.value}>{s.value}</span>+
+                </strong>
+                <span>{s.label}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <h2>Collaboration for Project ?</h2>
+        <a href={site.whatsapp} class="btn" target="_blank" rel="noopener">Contact Me <Icon name="whatsapp" size={14} /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SKILL ============ -->
+  <section class="section skills">
+    <div class="container">
+      <div class="skills-top">
+        <ul class="soft-skills">
+          {
+            softSkills.map((s) => (
+              <li class="reveal">
+                <svg viewBox="0 0 120 120" class="ring" aria-hidden="true">
+                  <circle cx="60" cy="60" r="52" class="ring-bg" />
+                  <circle cx="60" cy="60" r="52" class="ring-fg" style={`--pct:${s.value}`} />
+                </svg>
+                <span class="ring-label">
+                  {s.label}
+                  <small>{s.value}%</small>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+        <h2 class="section-title reveal">My Skill</h2>
+      </div>
+
+      <div class="marquee" aria-label="Daftar skill">
+        <ul class="marquee-track">
+          {
+            [...hardSkills, ...hardSkills].map((s, i) => (
+              <li aria-hidden={i >= hardSkills.length ? 'true' : undefined}>
+                <img src={s.image} alt={s.label} loading="lazy" width="96" height="120" />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PORTFOLIO ============ -->
+  <section class="section portfolio" id="porto">
+    <div class="container porto-grid">
+      <div class="porto-anim reveal">
+        <Lottie src="/animations/portfolio.json" />
+      </div>
+      <div>
+        <h2 class="section-title reveal">My Awesome Portofolio</h2>
+        <ul class="porto-cards">
+          {
+            portfolioCategories.map((c) => (
+              <li class="reveal">
+                <a href={c.href} class="porto-card">
+                  <span class="porto-icon">
+                    <Icon name={c.icon} size={30} />
+                  </span>
+                  <span class="porto-body">
+                    <strong>{c.title}</strong>
+                    <span>{c.subtitle}</span>
+                  </span>
+                  <span class="porto-arrow">
+                    <Icon name="arrow" size={30} />
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TOOLS ============ -->
+  <section class="tools-section">
+    <div class="container">
+      <div class="tools-card reveal">
+        <h2>Tools</h2>
+        <ul class="tools">
+          {
+            tools.map((t) => (
+              <li>
+                <img src={t.image} alt="" loading="lazy" width="56" height="56" />
+                <span>{t.label}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ORGANIZATION ============ -->
+  <section class="section organization">
+    <div class="container">
+      <h2 class="section-title center reveal">Organization</h2>
+      <ul class="org-grid">
+        {
+          organizations.map((o) => (
+            <li class="reveal">
+              <img src={o.logo} alt={`Logo ${o.name}`} loading="lazy" width="64" height="64" />
+              <h3>{o.name}</h3>
+              <p>{o.role}</p>
+              <p class="muted">{o.period}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section contact" id="contact">
+    <div class="container contact-grid">
+      <div class="reveal">
+        <h2 class="section-title">Contact</h2>
+        <p class="contact-lead">Hubungi saya untuk kerjasama, kolaborasi project, dan kebutuhan lainnya.</p>
+        <div class="contact-cols">
+          {
+            contactCols.map((col) => (
+              <ul>
+                {col.map((c) => (
+                  <li>
+                    <a href={c.href} target={c.href.startsWith('mailto') ? undefined : '_blank'} rel="noopener">
+                      <Icon name={c.icon} size={16} />
+                      <span>{c.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ))
+          }
+        </div>
+        <a href={site.whatsapp} class="btn" target="_blank" rel="noopener">Contact Me <Icon name="whatsapp" size={14} /></a>
+      </div>
+      <div class="contact-anim reveal">
+        <Lottie src="/animations/contact.json" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Animasi angka statistik
+  const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        io.unobserve(el);
+        const target = Number(el.dataset.count);
+        const start = performance.now();
+        const dur = 1400;
+        const tick = (now: number) => {
+          const p = Math.min((now - start) / dur, 1);
+          el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        el.textContent = '0';
+        requestAnimationFrame(tick);
+      });
+    },
+    { threshold: 0.4 },
+  );
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) counters.forEach((c) => io.observe(c));
+
+  // Animasi lingkaran soft skill
+  const rings = document.querySelectorAll<SVGCircleElement>('.ring-fg');
+  const ringIO = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('animate');
+        ringIO.unobserve(e.target);
+      }
+    });
+  });
+  rings.forEach((r) => ringIO.observe(r));
+</script>
+
+<style>
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 40px 0 60px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+    gap: 40px;
+    min-height: calc(100vh - 140px);
+    min-height: calc(100svh - 140px);
+  }
+  .hero h1 {
+    font-size: clamp(44px, 7vw, 82px);
+    font-weight: 700;
+    line-height: 0.95;
+  }
+  .hero h1 span {
+    display: block;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.18);
+  }
+  .hero h1 .text-green {
+    text-shadow: 0 0 24px rgba(157, 255, 32, 0.45);
+  }
+  .tagline {
+    color: #9ca3af;
+    font-size: 14px;
+    max-width: 520px;
+    margin: 26px 0 32px;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .hero-photo img {
+    width: 100%;
+    max-width: 480px;
+    margin-left: auto;
+    filter: drop-shadow(0 0 40px rgba(157, 255, 32, 0.15));
+  }
+
+  /* ---------- PROFILE ---------- */
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 0.75fr 1.25fr;
+    gap: 60px;
+    align-items: start;
+  }
+  .facts {
+    display: grid;
+    gap: 18px;
+  }
+  .fact {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--white);
+    color: var(--navy);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .fact-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--navy);
+    color: var(--green);
+  }
+  .fact-body {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.4;
+  }
+  .fact-body strong {
+    font-size: 15px;
+  }
+  .fact-body span {
+    font-size: 13px;
+    color: var(--slate);
+  }
+  .profile-text p {
+    color: #e5e5e5;
+    font-size: 14px;
+    text-align: justify;
+    margin-bottom: 14px;
+  }
+  .profile-text :global(strong) {
+    color: var(--white);
+  }
+  .dropcap {
+    float: left;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 76px;
+    margin: 6px 14px 0 0;
+    background: var(--green);
+    color: var(--navy);
+    font-size: 54px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  /* ---------- EDUCATION ---------- */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  .timeline li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-bottom: 30px;
+  }
+  .timeline li:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 39px;
+    top: 80px;
+    bottom: 0;
+    width: 2px;
+    background: var(--green);
+  }
+  .t-logo {
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    background: var(--green);
+  }
+  .t-logo img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+  }
+  .timeline h3 {
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .t-major {
+    font-size: 13px;
+    color: #e5e5e5;
+    margin-top: 4px;
+  }
+  .t-period {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .edu-anim {
+    max-width: 520px;
+    width: 100%;
+    margin-left: auto;
+  }
+
+  /* ---------- QUOTE ---------- */
+  .quote-section {
+    padding: 10px 0 40px;
+  }
+  .quote-card {
+    position: relative;
+    margin: 0;
+    background: var(--white);
+    color: var(--navy);
+    border-radius: var(--radius);
+    padding: 60px 70px 40px;
+    text-align: center;
+  }
+  .quote-mark {
+    position: absolute;
+    top: -10px;
+    left: 34px;
+    font-size: 150px;
+    line-height: 1;
+    color: var(--green);
+    font-family: Georgia, serif;
+  }
+  .quote-card blockquote {
+    position: relative;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    line-height: 1.8;
+  }
+  .quote-card figcaption {
+    text-align: right;
+    font-size: 12px;
+    margin: 18px 0 26px;
+  }
+
+  /* ---------- EXPERIENCE ---------- */
+  .exp-list {
+    column-count: 2;
+    column-gap: 60px;
+  }
+  .job {
+    break-inside: avoid;
+    margin-bottom: 44px;
+  }
+  .job-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    background: linear-gradient(110deg, #3f6b0c 0%, #1d3307 45%, #0b0b0b 100%);
+    margin-bottom: 18px;
+  }
+  .job-logo {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--white);
+    overflow: hidden;
+  }
+  .job-logo img {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+  }
+  .job-head h3 {
+    font-size: 19px;
+    color: var(--green);
+  }
+  .job-role {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .job-period {
+    font-size: 12px;
+    color: #d4d4d4;
+  }
+  .job-points {
+    display: grid;
+    gap: 10px;
+    padding-left: 18px;
+  }
+  .job-points li {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    color: #e5e5e5;
+    line-height: 1.6;
+  }
+  .job-points :global(.icon) {
+    flex-shrink: 0;
+    color: var(--green);
+    margin-top: 4px;
+  }
+
+  /* ---------- STATS ---------- */
+  .stats-card {
+    background: var(--white);
+    color: var(--navy);
+    border-radius: var(--radius);
+    padding: 56px 40px 50px;
+    text-align: center;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 36px;
+  }
+  .stats strong {
+    display: block;
+    font-size: clamp(36px, 5vw, 54px);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .stats li > span {
+    font-size: 13px;
+  }
+  .stats-card h2 {
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+
+  /* ---------- SKILL ---------- */
+  .skills-top {
+    display: grid;
+    grid-template-columns: 1.4fr 0.6fr;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+  .skills-top .section-title {
+    margin: 0;
+    text-align: center;
+  }
+  .soft-skills {
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+  }
+  .soft-skills li {
+    position: relative;
+    width: 150px;
+    aspect-ratio: 1;
+  }
+  .ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring circle {
+    fill: none;
+    stroke-width: 12;
+  }
+  .ring-bg {
+    stroke: #1f1f1f;
+  }
+  .ring-fg {
+    stroke: var(--green);
+    stroke-linecap: round;
+    stroke-dasharray: 326.7;
+    stroke-dashoffset: 326.7;
+    transition: stroke-dashoffset 1.6s ease;
+  }
+  :global(.ring-fg.animate) {
+    stroke-dashoffset: calc(326.7 - 326.7 * var(--pct) / 100);
+  }
+  .ring-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .ring-label small {
+    color: var(--green);
+    font-size: 12px;
+  }
+  .marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 18px;
+    width: max-content;
+    animation: marquee 32s linear infinite;
+  }
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+  .marquee-track li {
+    width: 96px;
+    flex-shrink: 0;
+  }
+  .marquee-track img {
+    width: 96px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: var(--white);
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(calc(-50% - 9px));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+      flex-wrap: wrap;
+      width: auto;
+      justify-content: center;
+    }
+  }
+
+  /* ---------- PORTFOLIO ---------- */
+  .porto-grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .porto-cards {
+    display: grid;
+    gap: 16px;
+  }
+  .porto-card {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: var(--white);
+    color: var(--navy);
+    border-radius: 10px;
+    padding: 22px 30px 22px 40px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .porto-card:hover,
+  .porto-card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(157, 255, 32, 0.25);
+  }
+  .porto-icon {
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--navy);
+    color: var(--green);
+  }
+  .porto-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .porto-body strong {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .porto-body span {
+    font-size: 15px;
+  }
+  .porto-arrow {
+    display: grid;
+    color: var(--navy);
+    transition: transform 0.25s ease;
+  }
+  .porto-card:hover .porto-arrow {
+    transform: translateX(6px);
+  }
+  .porto-anim {
+    max-width: 440px;
+    width: 100%;
+  }
+
+  /* ---------- TOOLS ---------- */
+  .tools-card {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: center;
+    gap: 30px;
+    background: var(--white);
+    color: var(--navy);
+    border-radius: var(--radius);
+    padding: 28px 60px;
+  }
+  .tools-card h2 {
+    font-size: 34px;
+  }
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px 30px;
+  }
+  .tools li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 72px;
+    text-align: center;
+  }
+  .tools img {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+  .tools span {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* ---------- ORGANIZATION ---------- */
+  .center {
+    text-align: center;
+  }
+  .org-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px 30px;
+  }
+  .org-grid img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    margin-bottom: 14px;
+  }
+  .org-grid h3 {
+    font-size: 17px;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .org-grid p {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .muted {
+    color: var(--muted);
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .contact .section-title {
+    margin-bottom: 16px;
+  }
+  .contact-lead {
+    font-size: 14px;
+    color: #e5e5e5;
+    margin-bottom: 26px;
+  }
+  .contact-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 30px;
+    margin-bottom: 30px;
+  }
+  .contact-cols ul {
+    display: grid;
+    gap: 12px;
+  }
+  .contact-cols a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    color: #e5e5e5;
+    word-break: break-word;
+    transition: color 0.2s ease;
+  }
+  .contact-cols a:hover {
+    color: var(--green);
+  }
+  .contact-anim {
+    max-width: 400px;
+    width: 100%;
+    margin-left: auto;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 991px) {
+    .hero-grid {
+      min-height: 0;
+    }
+    .profile-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .profile-text {
+      order: -1;
+    }
+    .facts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .fact {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+    .exp-list {
+      column-gap: 30px;
+    }
+    .skills-top {
+      grid-template-columns: 1fr;
+    }
+    .skills-top .section-title {
+      order: -1;
+    }
+    .porto-grid {
+      grid-template-columns: 1fr;
+    }
+    .porto-anim {
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .org-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .tools-card {
+      grid-template-columns: 1fr;
+      text-align: center;
+      padding: 28px 30px;
+    }
+    .tools {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero {
+      padding: 20px 0 40px;
+    }
+    .hero-grid {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: 20px;
+    }
+    .hero-photo {
+      order: -1;
+    }
+    .hero-photo img {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .tagline {
+      margin: 18px auto 26px;
+    }
+    .hero-actions {
+      justify-content: center;
+    }
+    .facts {
+      grid-template-columns: 1fr;
+    }
+    .fact {
+      flex-direction: row;
+      text-align: left;
+    }
+    .profile-text p {
+      text-align: left;
+    }
+    .dropcap {
+      width: 52px;
+      height: 62px;
+      font-size: 44px;
+    }
+    .edu-grid {
+      grid-template-columns: 1fr;
+    }
+    .edu-anim {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .timeline li {
+      gap: 16px;
+    }
+    .t-logo {
+      width: 64px;
+      height: 64px;
+    }
+    .t-logo img {
+      width: 46px;
+      height: 46px;
+    }
+    .timeline li:not(:last-child)::before {
+      left: 31px;
+      top: 64px;
+    }
+    .timeline h3 {
+      font-size: 17px;
+    }
+    .quote-card {
+      padding: 56px 24px 32px;
+    }
+    .quote-mark {
+      left: 18px;
+      font-size: 120px;
+    }
+    .quote-card blockquote {
+      font-size: 14px;
+    }
+    .exp-list {
+      column-count: 1;
+    }
+    .job-head h3 {
+      font-size: 17px;
+    }
+    .job-points {
+      padding-left: 6px;
+    }
+    .stats-card {
+      padding: 40px 20px;
+    }
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px 12px;
+    }
+    .stats-card h2 {
+      font-size: 18px;
+    }
+    .soft-skills li {
+      width: 100px;
+    }
+    .ring-label {
+      font-size: 11px;
+    }
+    .porto-card {
+      gap: 16px;
+      padding: 16px 18px;
+    }
+    .porto-icon {
+      width: 60px;
+      height: 60px;
+    }
+    .porto-body strong {
+      font-size: 17px;
+    }
+    .porto-body span {
+      font-size: 13px;
+    }
+    .org-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 18px;
+    }
+    .org-grid h3 {
+      font-size: 15px;
+    }
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+    .contact-cols {
+      grid-template-columns: 1fr;
+    }
+    .contact-anim {
+      max-width: 280px;
+      margin: 0 auto;
+    }
+  }
+</style>

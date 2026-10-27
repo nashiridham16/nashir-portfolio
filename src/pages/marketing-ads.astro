@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Gallery from '../components/Gallery.astro';
+import Icon from '../components/Icon.astro';
+import { adsGallery, adsReportLink } from '../data/site';
+---
+
+<BaseLayout title="Marketing Ads" description="Portofolio Digital Marketing Ads Idham Ahmad Nashir: laporan iklan Meta Ads dan Google Ads.">
+  <PageHero before="Digital" highlight="Marketing" after="Ads" image="/images/illustration-marketing.png" imageAlt="Ilustrasi digital marketing" />
+  <Gallery images={adsGallery} columns={3} label="Laporan iklan">
+    <div class="more">
+      <a href={adsReportLink} class="btn" target="_blank" rel="noopener">View More Ads Report <Icon name="external" size={16} /></a>
+    </div>
+  </Gallery>
+</BaseLayout>
+
+<style>
+  .more {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+</style>
