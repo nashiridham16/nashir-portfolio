@@ -1,0 +1,149 @@
+---
+// Kursor khusus: titik presisi + kurung kurawal { } yang mengikuti.
+// Saat menyorot link/tombol, kurung melebar dan menampilkan label (mis. "open", "view").
+// Otomatis nonaktif di layar sentuh.
+---
+
+<div class="cursor" aria-hidden="true">
+  <span class="c-dot"></span>
+  <span class="c-follow">
+    <span class="c-b">{'{'}</span>
+    <span class="c-text"></span>
+    <span class="c-b">{'}'}</span>
+  </span>
+</div>
+
+<script>
+  const fine = window.matchMedia('(pointer: fine)').matches;
+  const root = document.documentElement;
+  const cursor = document.querySelector<HTMLElement>('.cursor');
+  if (fine && cursor) {
+    root.classList.add('has-cursor');
+    const dot = cursor.querySelector<HTMLElement>('.c-dot')!;
+    const follow = cursor.querySelector<HTMLElement>('.c-follow')!;
+    const text = cursor.querySelector<HTMLElement>('.c-text')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let x = -100, y = -100, fx = -100, fy = -100;
+    window.addEventListener('pointermove', (e) => {
+      x = e.clientX;
+      y = e.clientY;
+      dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      cursor.classList.add('is-visible');
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => cursor.classList.remove('is-visible'));
+    window.addEventListener('pointerdown', () => cursor.classList.add('is-down'));
+    window.addEventListener('pointerup', () => cursor.classList.remove('is-down'));
+
+    const loop = () => {
+      const k = reduce ? 1 : 0.2;
+      fx += (x - fx) * k;
+      fy += (y - fy) * k;
+      follow.style.transform = `translate3d(${fx}px, ${fy}px, 0)`;
+      requestAnimationFrame(loop);
+    };
+    loop();
+
+    const label = (el: Element) => {
+      const custom = (el as HTMLElement).dataset.cursor;
+      if (custom) return custom;
+      const lang = root.lang === 'id' ? 'id' : 'en';
+      if (el.matches('summary')) return lang === 'id' ? 'buka' : 'open';
+      return lang === 'id' ? 'klik' : 'click';
+    };
+    document.addEventListener('pointerover', (e) => {
+      const el = (e.target as Element).closest('a, button, summary, [data-cursor]');
+      if (el) {
+        text.textContent = label(el);
+        cursor.classList.add('is-hover');
+      }
+    });
+    document.addEventListener('pointerout', (e) => {
+      const to = (e.relatedTarget as Element | null)?.closest?.('a, button, summary, [data-cursor]');
+      if (!to) cursor.classList.remove('is-hover');
+    });
+  }
+</script>
+
+<style>
+  .cursor {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .cursor.is-visible {
+    opacity: 1;
+  }
+  .c-dot,
+  .c-follow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    will-change: transform;
+  }
+  .c-dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+  }
+  .c-follow {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    margin-top: -15px;
+    translate: -50% 0;
+    font-family: var(--mono);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--green);
+    text-shadow: 0 0 12px rgba(157, 255, 32, 0.7);
+  }
+  .c-b {
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .c-b:first-child {
+    transform: translateX(-5px);
+  }
+  .c-b:last-child {
+    transform: translateX(5px);
+  }
+  .c-text {
+    display: inline-block;
+    max-width: 0;
+    overflow: hidden;
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--ink);
+    transition: max-width 0.25s ease, padding 0.25s ease;
+  }
+  .cursor.is-hover .c-text {
+    max-width: 80px;
+    padding: 0 6px;
+  }
+  .cursor.is-hover .c-b:first-child {
+    transform: translateX(-10px);
+  }
+  .cursor.is-hover .c-b:last-child {
+    transform: translateX(10px);
+  }
+  .cursor.is-hover .c-dot {
+    opacity: 0;
+  }
+  .cursor.is-down .c-b:first-child {
+    transform: translateX(-2px) scale(0.85);
+  }
+  .cursor.is-down .c-b:last-child {
+    transform: translateX(2px) scale(0.85);
+  }
+  :global(html.has-cursor),
+  :global(html.has-cursor *) {
+    cursor: none !important;
+  }
+</style>

@@ -1,0 +1,247 @@
+---
+// Galeri masonry dengan bingkai kaca + lightbox (klik untuk memperbesar, geser di HP)
+import Icon from './Icon.astro';
+import L from './L.astro';
+
+interface Props {
+  items: { src: string; caption?: string }[];
+  label: { en: string; id: string };
+  columns?: 2 | 3 | 4;
+  mobileColumns?: 1 | 2;
+}
+
+const { items, label, columns = 3, mobileColumns = 1 } = Astro.props;
+const ext = (src: string) => src.split('.').pop();
+---
+
+<div class="gallery" style={`--cols:${columns};--cols-m:${mobileColumns}`} data-gallery>
+  {items.map((it, i) => (
+    <button type="button" class="g-item" data-src={it.src} data-cursor="zoom" aria-label={`${label.en} ${i + 1}${it.caption ? `: ${it.caption}` : ''}`}>
+      <span class="g-bar">
+        <span class="g-dot" aria-hidden="true"></span>
+        <span class="g-name">{it.caption ? it.caption.toLowerCase().replace(/\s+/g, '-') : String(i + 1).padStart(2, '0')}.{ext(it.src)}</span>
+        <Icon name="zoom" size={14} />
+      </span>
+      <img src={it.src} alt={it.caption || `${label.en} ${i + 1}`} loading="lazy" decoding="async" />
+    </button>
+  ))}
+</div>
+
+<dialog class="lightbox" aria-label={label.en}>
+  <div class="lb-top">
+    <span class="lb-count"></span>
+    <L class="lb-label" t={label} />
+    <button type="button" class="lb-btn lb-close" aria-label="Close"><Icon name="close" size={22} /></button>
+  </div>
+  <button type="button" class="lb-btn lb-prev" aria-label="Previous"><Icon name="prev" size={26} /></button>
+  <img class="lb-img" src="" alt="" />
+  <button type="button" class="lb-btn lb-next" aria-label="Next"><Icon name="next" size={26} /></button>
+</dialog>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
+    const dialog = gallery.nextElementSibling as HTMLDialogElement | null;
+    if (!dialog || dialog.tagName !== 'DIALOG') return;
+    const img = dialog.querySelector<HTMLImageElement>('.lb-img')!;
+    const count = dialog.querySelector<HTMLElement>('.lb-count')!;
+    const items = [...gallery.querySelectorAll<HTMLButtonElement>('.g-item')];
+    let current = 0;
+    const show = (i: number) => {
+      current = (i + items.length) % items.length;
+      img.src = items[current].dataset.src!;
+      img.alt = items[current].querySelector('img')?.alt ?? '';
+      count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`;
+    };
+    items.forEach((btn, i) =>
+      btn.addEventListener('click', () => {
+        show(i);
+        dialog.showModal();
+        document.body.style.overflow = 'hidden';
+      }),
+    );
+    dialog.addEventListener('close', () => (document.body.style.overflow = ''));
+    dialog.querySelector('.lb-close')?.addEventListener('click', () => dialog.close());
+    dialog.querySelector('.lb-prev')?.addEventListener('click', () => show(current - 1));
+    dialog.querySelector('.lb-next')?.addEventListener('click', () => show(current + 1));
+    dialog.addEventListener('click', (e) => e.target === dialog && dialog.close());
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(current - 1);
+      if (e.key === 'ArrowRight') show(current + 1);
+    });
+    let startX = 0;
+    dialog.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+    dialog.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
+    });
+  });
+</script>
+
+<style>
+  .gallery {
+    column-count: var(--cols);
+    column-gap: 18px;
+  }
+  .g-item {
+    display: block;
+    width: 100%;
+    margin: 0 0 18px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: var(--muted);
+    text-align: left;
+    cursor: zoom-in;
+    break-inside: avoid;
+    transition: border-color 0.3s ease, transform 0.4s var(--ease), box-shadow 0.4s ease;
+  }
+  .g-item:hover,
+  .g-item:focus-visible {
+    border-color: rgba(157, 255, 32, 0.55);
+    transform: translateY(-3px);
+    box-shadow: 0 24px 50px -28px rgba(157, 255, 32, 0.45);
+  }
+  .g-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .g-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .g-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .g-item:hover .g-bar {
+    color: var(--green);
+  }
+  .g-item img {
+    width: 100%;
+    background: #0b1a10;
+  }
+
+  .lightbox {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 70px 72px 40px;
+    border: 0;
+    background: rgba(2, 5, 3, 0.94);
+    backdrop-filter: blur(10px);
+    color: var(--ink);
+  }
+  .lightbox[open] {
+    display: grid;
+    place-items: center;
+  }
+  .lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  .lb-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px 14px 24px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .lb-count {
+    color: var(--green);
+  }
+  .lb-top :global(.lb-label) {
+    color: var(--muted);
+  }
+  .lb-img {
+    max-width: 100%;
+    max-height: calc(100dvh - 130px);
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 80px -30px rgba(157, 255, 32, 0.35);
+  }
+  .lb-btn {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--glass-strong);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .lb-btn:hover {
+    background: var(--green);
+    color: #061104;
+  }
+  .lb-close {
+    margin-left: auto;
+    width: 40px;
+    height: 40px;
+  }
+  .lb-prev,
+  .lb-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .lb-prev {
+    left: 14px;
+  }
+  .lb-next {
+    right: 14px;
+  }
+
+  @media (max-width: 991px) {
+    .gallery {
+      column-count: min(var(--cols), 2);
+    }
+  }
+  @media (max-width: 575px) {
+    .gallery {
+      column-count: var(--cols-m);
+      column-gap: 10px;
+    }
+    .g-item {
+      margin-bottom: 10px;
+      border-radius: 12px;
+    }
+    .lightbox {
+      padding: 70px 12px 80px;
+    }
+    .lb-prev,
+    .lb-next {
+      top: auto;
+      bottom: 16px;
+      transform: none;
+    }
+    .lb-prev {
+      left: calc(50% - 56px);
+    }
+    .lb-next {
+      right: calc(50% - 56px);
+    }
+  }
+</style>

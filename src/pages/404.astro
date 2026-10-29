@@ -1,39 +1,77 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import DevLayout from '../layouts/DevLayout.astro';
+import L from '../components/L.astro';
+import { notFound } from '../data/pages';
 ---
 
-<BaseLayout title="Halaman tidak ditemukan">
-  <section class="nf">
-    <div class="container">
-      <p class="code">404</p>
-      <h1>Halaman tidak ditemukan</h1>
-      <p>Halaman yang Anda cari tidak ada atau sudah dipindahkan.</p>
-      <a href="/" class="btn">Kembali ke Home</a>
+<DevLayout title="404 | Idham Ahmad Nashir" description="Page not found.">
+  <section class="wrap nf">
+    <div class="win term">
+      <div class="win-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="win-file">zsh</span>
+      </div>
+      <div class="win-body">
+        <p class="cmd"><span class="prompt">~ $</span> cd <span class="path">this-page</span></p>
+        <p class="err">cd: no such file or directory</p>
+        <p class="code">404</p>
+        <L as="h1" t={notFound.title} />
+        <L as="p" class="lead" t={notFound.lead} />
+        <div class="actions">
+          <a href="/" class="btn btn-primary"><L t={notFound.home} /></a>
+          <a href="/#work" class="btn btn-ghost"><L t={notFound.work} /></a>
+        </div>
+      </div>
     </div>
   </section>
-</BaseLayout>
+</DevLayout>
 
 <style>
   .nf {
-    min-height: 60vh;
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 60px 0;
+    max-width: 760px;
+    padding-top: 60px;
+  }
+  .term {
+    background: var(--glass-strong);
+  }
+  .cmd,
+  .err {
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+  .prompt {
+    color: var(--green);
+    margin-right: 6px;
+  }
+  .path {
+    color: var(--amber);
+  }
+  .err {
+    color: #ff8a8a;
+    margin-top: 4px;
   }
   .code {
-    font-size: clamp(80px, 18vw, 160px);
-    font-weight: 700;
-    line-height: 1;
+    margin-top: 26px;
+    font-size: clamp(90px, 18vw, 160px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.05em;
     color: var(--green);
-    text-shadow: 0 0 30px rgba(157, 255, 32, 0.4);
+    text-shadow: 0 0 40px rgba(157, 255, 32, 0.45);
   }
   h1 {
-    font-size: 26px;
-    margin: 10px 0;
+    margin-top: 12px;
+    font-size: 30px;
   }
-  p {
-    color: #bbb;
-    margin-bottom: 26px;
+  .lead {
+    margin-top: 10px;
+    color: var(--muted);
+    max-width: 50ch;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 26px;
   }
 </style>

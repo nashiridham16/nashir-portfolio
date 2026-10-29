@@ -1,0 +1,420 @@
+---
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/dev.css';
+import Cursor from '../components/Cursor.astro';
+import L from '../components/L.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { nav, footer } from '../data/home';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Idham Ahmad Nashir | Front-End Developer, SEO & Digital Marketing',
+  description = 'Idham Ahmad Nashir builds websites that get found, clicked, and chosen: front-end development, SEO, Meta & Google Ads, and graphic design. Available for new projects.',
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const current = Astro.url.pathname.replace(/\/?$/, '/');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/images/logo-nashir.svg" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <meta name="theme-color" content="#020503" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL('/images/profile-photo.png', Astro.site ?? Astro.url).href} />
+    <script is:inline>
+      // Terapkan bahasa tersimpan sebelum halaman tampil (hindari kedip)
+      try {
+        if (localStorage.getItem('lang') === 'id') document.documentElement.lang = 'id';
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true"></div>
+    <div class="glow glow-a" aria-hidden="true"></div>
+    <div class="glow glow-b" aria-hidden="true"></div>
+
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <a href="/" class="brand" aria-label="Idham Ahmad Nashir, home">
+          <img src="/images/logo-nashir.svg" alt="" width="30" height="30" />
+          <span><span class="brand-tag">&lt;</span>nashir<span class="brand-tag">/&gt;</span></span>
+        </a>
+
+        <nav class="menu" id="menu" aria-label="Main">
+          <ul>
+            {nav.map((n) => (
+              <li>
+                <a href={n.href} aria-current={current === n.href ? 'page' : undefined}><L t={n.label} /></a>
+              </li>
+            ))}
+          </ul>
+          <a href={site.whatsapp} class="btn btn-primary menu-cta-mobile" target="_blank" rel="noopener">
+            <L t={{ en: 'Hire me', id: 'Ajak kerja sama' }} />
+          </a>
+        </nav>
+
+        <div class="top-actions">
+          <div class="lang" role="group" aria-label="Language / Bahasa">
+            <button type="button" data-lang="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang="id" aria-pressed="false">ID</button>
+          </div>
+          <a href={site.whatsapp} class="btn btn-primary hire" target="_blank" rel="noopener">
+            <span class="pulse" aria-hidden="true"></span>
+            <L t={{ en: 'Hire me', id: 'Ajak kerja sama' }} />
+          </a>
+          <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu">
+            <span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="statusbar">
+      <div class="wrap status-inner">
+        <span class="seg seg-live"><span class="pulse" aria-hidden="true"></span><L t={footer.available} /></span>
+        <span class="seg seg-grow">Kepanjen, Malang (UTC+7)</span>
+        <span class="seg">© {new Date().getFullYear()} Idham Ahmad Nashir</span>
+        <a href="#main" class="seg seg-top" aria-label="Back to top"><Icon name="up" size={14} /></a>
+      </div>
+    </footer>
+
+    <Cursor />
+
+    <script>
+      // ---------- Ganti bahasa EN / ID ----------
+      const root = document.documentElement;
+      const buttons = document.querySelectorAll<HTMLButtonElement>('[data-lang]');
+      const applyLang = (lang: 'en' | 'id') => {
+        root.lang = lang;
+        document.querySelectorAll<HTMLElement>('[data-t-en]').forEach((el) => {
+          const next = lang === 'id' ? el.dataset.tId : el.dataset.tEn;
+          if (next !== undefined && el.innerHTML !== next) el.innerHTML = next;
+        });
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+        try {
+          localStorage.setItem('lang', lang);
+        } catch (e) {}
+      };
+      buttons.forEach((b) => b.addEventListener('click', () => applyLang(b.dataset.lang as 'en' | 'id')));
+      if (root.lang === 'id') applyLang('id');
+
+      // ---------- Menu mobile ----------
+      const header = document.querySelector<HTMLElement>('.topbar');
+      const burger = document.querySelector<HTMLButtonElement>('.burger');
+      const closeMenu = () => {
+        header?.classList.remove('open');
+        burger?.setAttribute('aria-expanded', 'false');
+      };
+      burger?.addEventListener('click', () => {
+        const open = header?.classList.toggle('open');
+        burger.setAttribute('aria-expanded', String(!!open));
+      });
+      document.querySelectorAll('#menu a').forEach((a) => a.addEventListener('click', closeMenu));
+      document.addEventListener('keydown', (e) => e.key === 'Escape' && closeMenu());
+      const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 24);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // ---------- Panel muncul saat discroll ----------
+      const io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.12, rootMargin: '0px 0px -60px 0px' },
+      );
+      document.querySelectorAll('.rise').forEach((el) => io.observe(el));
+    </script>
+
+    <style>
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 8px;
+        z-index: 300;
+        padding: 10px 14px;
+        background: var(--green);
+        color: #000;
+        border-radius: 8px;
+      }
+      .skip:focus {
+        left: 12px;
+      }
+
+      /* ---------- Topbar ---------- */
+      .topbar {
+        position: sticky;
+        top: env(safe-area-inset-top, 0px);
+        z-index: 200;
+        padding: 16px 0;
+        animation: drop 0.7s var(--ease) both;
+      }
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 10px 12px 10px 20px;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        transition: background 0.3s ease, border-color 0.3s ease;
+      }
+      .topbar.scrolled .topbar-inner,
+      .topbar.open .topbar-inner {
+        background: var(--glass-strong);
+        border-color: var(--line);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--mono);
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .brand-tag {
+        color: var(--green);
+      }
+      .menu {
+        margin-left: auto;
+      }
+      .menu ul {
+        display: flex;
+        gap: 4px;
+      }
+      .menu a:not(.btn) {
+        display: block;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 15px;
+        color: var(--muted);
+        transition: color 0.2s ease, background 0.2s ease;
+      }
+      .menu a[aria-current='page'] {
+        color: var(--green);
+        background: rgba(157, 255, 32, 0.1);
+      }
+      .menu a:not(.btn):hover {
+        color: var(--ink);
+        background: rgba(157, 255, 32, 0.08);
+      }
+      .menu-cta-mobile {
+        display: none;
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .lang {
+        display: flex;
+        padding: 3px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(2, 5, 3, 0.5);
+      }
+      .lang button {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 6px 10px;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+      .lang button[aria-pressed='true'] {
+        background: var(--green);
+        color: #061104;
+      }
+      .hire {
+        padding: 10px 16px;
+        font-size: 15px;
+      }
+      .burger {
+        display: none;
+        width: 42px;
+        height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(2, 5, 3, 0.5);
+        cursor: pointer;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+      }
+      .burger span {
+        width: 18px;
+        height: 2px;
+        background: var(--ink);
+        border-radius: 2px;
+        transition: transform 0.25s ease;
+      }
+      .open .burger span:first-child {
+        transform: translateY(4px) rotate(45deg);
+      }
+      .open .burger span:last-child {
+        transform: translateY(-4px) rotate(-45deg);
+      }
+
+      /* ---------- Status bar (footer) ---------- */
+      .statusbar {
+        margin-top: 120px;
+        border-top: 1px solid var(--line);
+        background: rgba(2, 5, 3, 0.75);
+        backdrop-filter: blur(12px);
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .status-inner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+      }
+      .seg {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 16px;
+        border-right: 1px solid var(--line-soft);
+      }
+      .seg:first-child {
+        padding-left: 0;
+      }
+      .seg-live {
+        color: var(--green);
+      }
+      .seg-grow {
+        flex: 1;
+      }
+      .seg-top {
+        border-right: 0;
+        color: var(--ink);
+      }
+      .seg-top:hover {
+        color: var(--green);
+      }
+
+      @keyframes drop {
+        from {
+          opacity: 0;
+          transform: translateY(-16px);
+        }
+      }
+      @keyframes ping {
+        75%,
+        100% {
+          transform: scale(2.6);
+          opacity: 0;
+        }
+      }
+
+      @media (max-width: 1080px) {
+        .burger {
+          display: flex;
+        }
+        .hire {
+          display: none;
+        }
+        .top-actions {
+          margin-left: auto;
+        }
+        .menu {
+          position: absolute;
+          top: calc(100% - 6px);
+          left: 24px;
+          right: 24px;
+          padding: 14px;
+          border: 1px solid var(--line);
+          border-radius: 16px;
+          background: var(--glass-strong);
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+          opacity: 0;
+          transform: translateY(-8px);
+          pointer-events: none;
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .open .menu {
+          opacity: 1;
+          transform: none;
+          pointer-events: auto;
+        }
+        .menu ul {
+          flex-direction: column;
+        }
+        .menu a:not(.btn) {
+          padding: 12px 14px;
+          font-size: 17px;
+          color: var(--ink);
+        }
+        .menu-cta-mobile {
+          display: flex;
+          justify-content: center;
+          margin-top: 10px;
+        }
+      }
+      @media (max-width: 767px) {
+        .topbar {
+          padding: 10px 0;
+        }
+        .topbar-inner {
+          padding: 8px 8px 8px 14px;
+        }
+        .menu {
+          left: 16px;
+          right: 16px;
+        }
+        .status-inner {
+          flex-direction: column;
+          align-items: center;
+          padding-block: 14px;
+          text-align: center;
+        }
+        .seg,
+        .seg:first-child {
+          justify-content: center;
+          padding: 6px 0;
+          border-right: 0;
+        }
+        .seg-grow {
+          flex: 0 1 auto;
+        }
+        .statusbar {
+          margin-top: 88px;
+        }
+      }
+    </style>
+  </body>
+</html>

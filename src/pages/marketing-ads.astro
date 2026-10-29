@@ -1,24 +1,40 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
-import Gallery from '../components/Gallery.astro';
+import DevLayout from '../layouts/DevLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import WorkTabs from '../components/WorkTabs.astro';
+import DevGallery from '../components/DevGallery.astro';
+import CtaBand from '../components/CtaBand.astro';
+import L from '../components/L.astro';
 import Icon from '../components/Icon.astro';
 import { adsGallery, adsReportLink } from '../data/site';
+import { adsPage, adsMore, galleryLabels } from '../data/pages';
 ---
 
-<BaseLayout title="Marketing Ads" description="Portofolio Digital Marketing Ads Idham Ahmad Nashir: laporan iklan Meta Ads dan Google Ads.">
-  <PageHero before="Digital" highlight="Marketing" after="Ads" image="/images/illustration-marketing.png" imageAlt="Ilustrasi digital marketing" />
-  <Gallery images={adsGallery} columns={3} label="Laporan iklan">
+<DevLayout title={adsPage.metaTitle} description={adsPage.metaDescription}>
+  <PageHead page={adsPage}>
+    <a slot="actions" href={adsReportLink} class="btn btn-ghost" target="_blank" rel="noopener">
+      <Icon name="external" size={18} /> <L t={adsMore} />
+    </a>
+  </PageHead>
+  <WorkTabs />
+  <section class="wrap body">
+    <DevGallery items={adsGallery} label={galleryLabels.ads} columns={3} />
     <div class="more">
-      <a href={adsReportLink} class="btn" target="_blank" rel="noopener">View More Ads Report <Icon name="external" size={16} /></a>
+      <a href={adsReportLink} class="btn btn-primary" target="_blank" rel="noopener">
+        <Icon name="external" size={18} /> <L t={adsMore} />
+      </a>
     </div>
-  </Gallery>
-</BaseLayout>
+  </section>
+  <CtaBand />
+</DevLayout>
 
 <style>
+  .body {
+    padding-top: 28px;
+  }
   .more {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 16px;
   }
 </style>

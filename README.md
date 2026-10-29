@@ -1,64 +1,64 @@
-# Portofolio Idham Ahmad Nashir (Astro)
+# Portofolio Idham Ahmad Nashir (Astro) — Redesign "Dev Workspace"
 
-Konversi website portofolio dari WordPress (Pantheon) ke **Astro**, siap di-push ke GitHub dan di-hosting di **Vercel**.
+Website portofolio dengan gaya code editor: panel kaca (glass) gelap + hijau neon, bahasa Inggris dengan tombol ganti ke Bahasa Indonesia, animasi masuk, dan kursor khusus `{ • }`.
+
+## Halaman
+
+| File | URL |
+| --- | --- |
+| `src/pages/index.astro` | `/` (Home) |
+| `src/pages/web-dev.astro` | `/web-dev/` (filter per jenis website) |
+| `src/pages/seo.astro` | `/seo/` |
+| `src/pages/marketing-ads.astro` | `/marketing-ads/` |
+| `src/pages/graphic-design.astro` | `/graphic-design/` |
+| `src/pages/certification.astro` | `/certification/` |
+| `src/pages/404.astro` | halaman tidak ditemukan |
 
 ## Struktur folder
 
 ```
-nashir-portfolio/
-├── public/
-│   ├── images/        ← SEMUA gambar website ada di sini (125 file)
-│   ├── animations/    ← animasi Lottie (.json) untuk Education, Portofolio, Contact
-│   └── files/         ← CV (PDF)
-├── src/
-│   ├── data/site.ts   ← SEMUA teks & daftar konten (edit di sini)
-│   ├── components/    ← Header, Footer, Gallery (lightbox), PageHero, Icon, Lottie
-│   ├── layouts/       ← BaseLayout (head, SEO meta, tombol back-to-top)
-│   ├── pages/         ← halaman website
-│   │   ├── index.astro           → /
-│   │   ├── web-dev.astro         → /web-dev/
-│   │   ├── seo.astro             → /seo/
-│   │   ├── marketing-ads.astro   → /marketing-ads/
-│   │   ├── graphic-design.astro  → /graphic-design/
-│   │   ├── certification.astro   → /certification/
-│   │   └── 404.astro             → halaman tidak ditemukan
-│   └── styles/global.css         ← warna, font, style dasar
-└── astro.config.mjs
-```
-
-## Cara menjalankan di komputer
-
-Butuh **Node.js 22.23 atau lebih baru** (Astro 7).
-
-```bash
-npm install
-npm run dev       # buka http://localhost:4321
-npm run build     # hasil build ada di folder dist/
-npm run preview   # cek hasil build
+public/
+  favicon.ico        ← ikon website (logo N daun + sirkuit, transparan)
+  images/            ← SEMUA gambar website ada di sini
+src/
+  data/
+    home.ts          ← teks Home (EN + ID)
+    pages.ts         ← teks halaman lain (EN + ID)
+    site.ts          ← link, kontak, daftar gambar galeri & proyek
+  components/        ← L (teks 2 bahasa), Cursor, Icon, PageHead, WorkTabs, DevGallery, CtaBand
+  layouts/DevLayout.astro   ← menu, tombol EN/ID, footer status bar
+  styles/dev.css            ← warna, font, panel kaca
 ```
 
 ## Cara update konten
 
-- **Teks, pengalaman, pendidikan, organisasi, kontak, statistik** → edit `src/data/site.ts`.
-- **Tambah gambar** → taruh file di `public/images/`, lalu tambahkan nama filenya ke daftar yang sesuai di `src/data/site.ts`
-  (misalnya `seoGallery`, `adsGallery`, `designGallery`, `certificateGallery`, atau `webProjects`).
-- **Warna & font** → `src/styles/global.css` (warna hijau utama: `--green: #9dff20`).
+- **Teks** ada di `src/data/home.ts` dan `src/data/pages.ts`. Setiap teks punya dua versi: `en` (English) dan `id` (Indonesia).
+- **Gambar baru**: taruh di `public/images/`, lalu tambahkan nama filenya di `src/data/site.ts` (misalnya `seoGallery`, `designGallery`, `certificateGallery`, atau `webProjects`).
+- **Warna**: `src/styles/dev.css` (`--green: #9dff20`).
 
-## Deploy ke Vercel
+## Menjalankan di komputer
 
-1. Push folder ini ke repository GitHub baru.
-2. Di [vercel.com](https://vercel.com) → **Add New… → Project** → pilih repo tersebut.
-3. Vercel otomatis mendeteksi **Astro**. Biarkan default (Build: `npm run build`, Output: `dist`).
-4. Di **Settings → General → Node.js Version**, pilih **22.x** (atau lebih baru).
-5. Klik **Deploy**.
-6. Setelah dapat domain, ganti nilai `site` di `astro.config.mjs` dengan domain Anda (untuk canonical URL/SEO).
+Butuh **Node.js 22.23 atau lebih baru**.
 
-## Perubahan dari versi WordPress
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # hasil ada di folder dist/
+```
 
-- Card **SEO Project** diperbaiki (posisi ikon sejajar dengan card lain) dan mengarah ke `/seo/`.
-- Bagian bar putih kosong yang rusak di bawah card SEO Project dihapus.
-- Ikon login melayang di kiri bawah dihapus.
-- Kalimat & link spam "Masterarbeit schreiben lassen" di bagian My Profile dihapus.
-- Angka statistik memakai nilai yang benar (3+, 12+, 126+, 49+), bukan angka awal animasi (88+ dll.).
-- Galeri memakai lightbox sendiri (klik untuk memperbesar, bisa geser di HP).
-- Responsive untuk desktop, tablet, dan mobile (menu hamburger di layar kecil).
+## Update ke GitHub (repo yang sudah ada)
+
+1. Buka folder repo lama Anda (misalnya `D:\nashir-portfolio`).
+2. Hapus semua isi folder **kecuali folder `.git`** (folder ini tersembunyi; jangan dihapus).
+3. Ekstrak isi ZIP ini ke folder tersebut, sehingga `package.json`, `src`, dan `public` langsung berada di dalamnya.
+4. Jalankan di Command Prompt:
+
+```bat
+D:
+cd \nashir-portfolio
+git add -A
+git commit -m "Redesign: dev workspace style, EN/ID, new favicon"
+git push
+```
+
+Vercel akan otomatis build ulang setelah push. Pastikan Node.js Version di Vercel (Settings → General) memakai **22.x** atau lebih baru.

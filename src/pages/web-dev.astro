@@ -1,88 +1,181 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
+import DevLayout from '../layouts/DevLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import WorkTabs from '../components/WorkTabs.astro';
+import CtaBand from '../components/CtaBand.astro';
+import L from '../components/L.astro';
 import { webProjects } from '../data/site';
+import { webDevPage, webFilters, webKinds, filterGroup } from '../data/pages';
+
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+const counts: Record<string, number> = { all: webProjects.length };
+webProjects.forEach((p) => {
+  const g = filterGroup(p.kind);
+  counts[g] = (counts[g] ?? 0) + 1;
+});
 ---
 
-<BaseLayout title="Web Develop" description="Portofolio website yang dibuat Idham Ahmad Nashir: company profile, landing page, toko online, dan lainnya.">
-  <PageHero before="Website" highlight="Developer" image="/images/illustration-web-dev.png" imageAlt="Ilustrasi web developer" />
+<DevLayout title={webDevPage.metaTitle} description={webDevPage.metaDescription}>
+  <PageHead page={webDevPage} />
+  <WorkTabs />
 
-  <section class="projects">
-    <div class="container">
-      <ul class="project-grid">
-        {
-          webProjects.map((p) => (
-            <li class="project reveal">
-              <div class="project-img">
-                <img src={p.image} alt={`Tampilan website ${p.name}`} loading="lazy" decoding="async" width="988" height="568" />
-              </div>
-              <div class="project-body">
-                <h2>{p.name}</h2>
-                <p>{p.type}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
+  <section class="wrap projects">
+    <div class="filters" role="group" aria-label="Filter projects">
+      {webFilters.map((f, i) => (
+        <button type="button" data-filter={f.key} aria-pressed={i === 0 ? 'true' : 'false'}>
+          <L t={f.label} />
+          <span class="count">{counts[f.key] ?? 0}</span>
+        </button>
+      ))}
     </div>
+
+    <ul class="grid">
+      {webProjects.map((p, i) => (
+        <li class="card rise" data-group={filterGroup(p.kind)} style={`--d:${(i % 3) * 0.06}s`}>
+          <article class="win">
+            <div class="win-bar">
+              <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="win-file">{slug(p.name)}</span>
+            </div>
+            <div class="shot">
+              <img src={p.image} alt={`Website ${p.name}`} width="988" height="568" loading="lazy" decoding="async" />
+            </div>
+            <div class="info">
+              <h2>{p.name}</h2>
+              <L as="span" class="kind" t={webKinds[p.kind]} />
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
   </section>
-</BaseLayout>
+
+  <CtaBand />
+</DevLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('.card');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((c) => {
+        const show = f === 'all' || c.dataset.group === f;
+        c.hidden = !show;
+        if (show) c.classList.add('in');
+      });
+    }),
+  );
+</script>
 
 <style>
   .projects {
-    padding: 28px 0 90px;
+    padding-top: 28px;
   }
-  .project-grid {
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .filters button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(2, 5, 3, 0.5);
+    color: var(--muted);
+    font: 500 14.5px var(--sans);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .filters button:hover {
+    color: var(--ink);
+    border-color: rgba(157, 255, 32, 0.45);
+  }
+  .filters button[aria-pressed='true'] {
+    background: var(--green);
+    border-color: var(--green);
+    color: #061104;
+  }
+  .count {
+    font-family: var(--mono);
+    font-size: 12px;
+    opacity: 0.75;
+  }
+  .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
   }
-  .project {
-    background: var(--white);
-    color: var(--navy);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  .card[hidden] {
+    display: none;
   }
-  .project:hover {
+  .card .win {
+    height: 100%;
+    transition: border-color 0.3s ease, transform 0.4s var(--ease), box-shadow 0.4s ease;
+  }
+  .card .win:hover {
+    border-color: rgba(157, 255, 32, 0.5);
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(157, 255, 32, 0.22);
+    box-shadow: 0 28px 56px -30px rgba(157, 255, 32, 0.4);
   }
-  .project-img {
-    background: #f4f4f4;
+  .shot {
     aspect-ratio: 988 / 568;
     overflow: hidden;
+    background: #f1f4f2;
+    border-bottom: 1px solid var(--line-soft);
   }
-  .project-img img {
+  .shot img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    transition: transform 0.6s var(--ease);
   }
-  .project:hover .project-img img {
+  .card .win:hover .shot img {
     transform: scale(1.04);
   }
-  .project-body {
-    padding: 16px 20px 20px;
-    border-top: 4px solid var(--green);
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 18px 18px;
   }
-  .project-body h2 {
-    font-size: 17px;
+  .info h2 {
+    font-size: 19px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
   }
-  .project-body p {
-    font-size: 13px;
-    color: var(--slate);
-    margin-top: 2px;
+  .info :global(.kind) {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--green);
   }
   @media (max-width: 991px) {
-    .project-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   @media (max-width: 575px) {
-    .project-grid {
+    .grid {
       grid-template-columns: 1fr;
-      gap: 18px;
+      gap: 16px;
+    }
+    .filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin-inline: -16px;
+      padding-inline: 16px;
+      scrollbar-width: none;
+    }
+    .filters::-webkit-scrollbar {
+      display: none;
+    }
+    .filters button {
+      flex-shrink: 0;
     }
   }
 </style>

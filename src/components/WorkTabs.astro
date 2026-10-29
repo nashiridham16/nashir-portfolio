@@ -1,0 +1,101 @@
+---
+// Tab ala code editor untuk berpindah antar halaman portofolio
+import L from './L.astro';
+import { workTabs } from '../data/pages';
+
+const current = Astro.url.pathname.replace(/\/?$/, '/');
+---
+
+<nav class="wrap tabs-wrap" aria-label="Portfolio categories">
+  <ul class="tabs">
+    {workTabs.map((t) => (
+      <li>
+        <a href={t.href} aria-current={current === t.href ? 'page' : undefined}>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="tab-file">{t.file}</span>
+          <L class="tab-label" t={t.label} />
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  // Di HP, geser tab aktif supaya terlihat
+  const active = document.querySelector<HTMLElement>('.tabs [aria-current="page"]');
+  const list = active?.closest<HTMLElement>('.tabs');
+  if (active && list) list.scrollLeft = active.offsetLeft - 16;
+</script>
+
+<style>
+  .tabs-wrap {
+    margin-top: 80px;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tabs a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color 0.2s ease, background 0.2s ease;
+  }
+  .tabs a:hover {
+    color: var(--ink);
+    background: rgba(157, 255, 32, 0.05);
+  }
+  .tabs a[aria-current='page'] {
+    position: relative;
+    color: var(--ink);
+    background: var(--glass);
+    border-color: var(--line);
+    backdrop-filter: blur(14px);
+  }
+  .tabs a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--faint);
+  }
+  [aria-current='page'] .dot {
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+  }
+  .tabs :global(.tab-label) {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .tabs-wrap {
+      margin-top: 56px;
+    }
+    .tabs a {
+      padding: 10px 14px;
+      font-size: 12.5px;
+    }
+  }
+</style>

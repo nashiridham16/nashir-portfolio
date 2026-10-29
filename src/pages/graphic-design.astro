@@ -1,11 +1,24 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
-import Gallery from '../components/Gallery.astro';
+import DevLayout from '../layouts/DevLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import WorkTabs from '../components/WorkTabs.astro';
+import DevGallery from '../components/DevGallery.astro';
+import CtaBand from '../components/CtaBand.astro';
 import { designGallery } from '../data/site';
+import { designPage, galleryLabels } from '../data/pages';
 ---
 
-<BaseLayout title="Graphic Design" description="Portofolio Graphic Design Idham Ahmad Nashir: poster, logo, banner, dan konten visual.">
-  <PageHero before="Graphic" highlight="Design" image="/images/illustration-graphic-design.png" imageAlt="Ilustrasi graphic design" />
-  <Gallery images={designGallery} columns={4} mobileColumns={2} label="Desain grafis" />
-</BaseLayout>
+<DevLayout title={designPage.metaTitle} description={designPage.metaDescription}>
+  <PageHead page={designPage} />
+  <WorkTabs />
+  <section class="wrap body">
+    <DevGallery items={designGallery} label={galleryLabels.design} columns={4} mobileColumns={2} />
+  </section>
+  <CtaBand />
+</DevLayout>
+
+<style>
+  .body {
+    padding-top: 28px;
+  }
+</style>

@@ -32,6 +32,7 @@ const lucide: Record<string, string> = {
   prev: 'chevron-left',
   next: 'chevron-right',
   quote: 'quote',
+  trend: 'trending-up',
 };
 
 const brands: Record<string, string> = {
@@ -53,9 +54,10 @@ if (name === 'linkedin') {
   svg = linkedin;
 } else if (lucide[name]) {
   svg = fs.readFileSync(path.join(root, 'node_modules/lucide-static/icons', `${lucide[name]}.svg`), 'utf8');
-} else if (brands[name]) {
+} else if (brands[name] || name.startsWith('si:')) {
+  const file = brands[name] ?? name.slice(3);
   svg = fs
-    .readFileSync(path.join(root, 'node_modules/simple-icons/icons', `${brands[name]}.svg`), 'utf8')
+    .readFileSync(path.join(root, 'node_modules/simple-icons/icons', `${file}.svg`), 'utf8')
     .replace('<svg', '<svg fill="currentColor"');
 }
 

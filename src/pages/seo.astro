@@ -1,11 +1,24 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
-import Gallery from '../components/Gallery.astro';
+import DevLayout from '../layouts/DevLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import WorkTabs from '../components/WorkTabs.astro';
+import DevGallery from '../components/DevGallery.astro';
+import CtaBand from '../components/CtaBand.astro';
 import { seoGallery } from '../data/site';
+import { seoPage, galleryLabels } from '../data/pages';
 ---
 
-<BaseLayout title="SEO" description="Portofolio SEO Idham Ahmad Nashir: hasil optimasi website di Google Search Console.">
-  <PageHero before="Search" highlight="Engine" after="Optimization" image="/images/illustration-marketing.png" imageAlt="Ilustrasi SEO" />
-  <Gallery images={seoGallery} columns={3} label="Hasil SEO" />
-</BaseLayout>
+<DevLayout title={seoPage.metaTitle} description={seoPage.metaDescription}>
+  <PageHead page={seoPage} />
+  <WorkTabs />
+  <section class="wrap body">
+    <DevGallery items={seoGallery} label={galleryLabels.seo} columns={2} />
+  </section>
+  <CtaBand />
+</DevLayout>
+
+<style>
+  .body {
+    padding-top: 28px;
+  }
+</style>

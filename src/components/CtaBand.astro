@@ -1,0 +1,88 @@
+---
+// Ajakan kerja sama di bagian bawah halaman dalam
+import L from './L.astro';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import { cta, notFound } from '../data/pages';
+import { hero } from '../data/home';
+---
+
+<section class="wrap cta-sec">
+  <div class="win cta rise">
+    <div class="win-bar">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="win-file">next-project.sh</span>
+    </div>
+    <div class="cta-body">
+      <div>
+        <p class="cta-status"><span class="pulse" aria-hidden="true"></span><L t={hero.status} /></p>
+        <L as="h2" class="cta-title" t={cta.title} />
+        <L as="p" class="cta-lead" t={cta.lead} />
+      </div>
+      <div class="cta-actions">
+        <a href={site.whatsapp} class="btn btn-primary" target="_blank" rel="noopener">
+          <Icon name="whatsapp" size={18} /> <L t={cta.primary} />
+        </a>
+        <a href="/#work" class="btn btn-ghost">
+          <L t={notFound.work} />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-sec {
+    margin-top: 110px;
+  }
+  .cta {
+    background:
+      radial-gradient(circle at 100% 0%, rgba(157, 255, 32, 0.16), transparent 50%),
+      var(--glass);
+  }
+  .cta-body {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: end;
+    padding: 40px;
+  }
+  .cta-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--green-2);
+  }
+  .cta-title {
+    margin-top: 14px;
+    font-size: clamp(30px, 4vw, 48px);
+    font-variation-settings: 'wdth' 90;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .cta-lead {
+    margin-top: 12px;
+    max-width: 56ch;
+    color: var(--muted);
+  }
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  @media (max-width: 767px) {
+    .cta-sec {
+      margin-top: 80px;
+    }
+    .cta-body {
+      grid-template-columns: 1fr;
+      padding: 24px 20px;
+    }
+    .cta-actions .btn {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  }
+</style>

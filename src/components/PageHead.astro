@@ -1,0 +1,221 @@
+---
+// Header halaman dalam (Web Dev, SEO, Ads, Design, Certification)
+import L from './L.astro';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import { hero } from '../data/home';
+import { cta, type PageHead } from '../data/pages';
+
+interface Props {
+  page: PageHead;
+}
+const { page } = Astro.props;
+
+const words = (s: string) =>
+  s
+    .split(' ')
+    .map((w, i) => `<span class="w"><span style="--i:${i}">${w}</span></span>`)
+    .join(' ');
+const title = { en: words(page.title.en), id: words(page.title.id) };
+const val = (v: string | { en: string; id: string }) => (typeof v === 'string' ? { en: v, id: v } : v);
+---
+
+<section class="ph">
+  <div class="wrap ph-grid">
+    <div class="ph-copy">
+      <p class="ph-path">
+        <a href="/">~</a><span>{page.path.slice(1)}</span>
+      </p>
+      <L as="h1" class="ph-title" t={title} />
+      <L as="p" class="ph-lead" t={page.lead} />
+
+      <ul class="ph-stats">
+        {page.highlights.map((h) => (
+          <li>
+            <L as="strong" t={val(h.value)} />
+            <L as="span" t={h.label} />
+          </li>
+        ))}
+      </ul>
+
+      <div class="ph-cta">
+        <a href={site.whatsapp} class="btn btn-primary" target="_blank" rel="noopener">
+          <Icon name="whatsapp" size={18} />
+          <L t={cta.primary} />
+        </a>
+        <slot name="actions" />
+      </div>
+    </div>
+
+    <figure class="win ph-visual">
+      <figcaption class="win-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="win-file">{page.file}</span>
+        <span class="ph-status"><span class="pulse" aria-hidden="true"></span><L t={hero.status} /></span>
+      </figcaption>
+      <img src={page.image} alt="" width="640" height="320" fetchpriority="high" />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .ph {
+    padding-top: 36px;
+  }
+  .ph-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .ph-path {
+    display: flex;
+    gap: 2px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--green);
+    animation: ph-up 0.7s var(--ease) 0.1s both;
+  }
+  .ph-path a {
+    color: var(--muted);
+  }
+  .ph-path a:hover {
+    color: var(--green);
+  }
+  .ph-title {
+    margin-top: 18px;
+    font-size: clamp(40px, 5.4vw, 72px);
+    font-weight: 750;
+    font-variation-settings: 'wdth' 90;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .ph-title :global(.w) {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .ph-title :global(.w > span) {
+    display: inline-block;
+    animation: ph-word 0.9s var(--ease) both;
+    animation-delay: calc(0.2s + var(--i) * 0.06s);
+  }
+  .ph-lead {
+    margin-top: 22px;
+    max-width: 56ch;
+    color: var(--muted);
+    font-size: 18px;
+    animation: ph-up 0.8s var(--ease) 0.55s both;
+  }
+  .ph-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 30px;
+    animation: ph-up 0.8s var(--ease) 0.7s both;
+  }
+  .ph-stats li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .ph-stats :global(strong) {
+    font-size: 26px;
+    font-weight: 750;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--green);
+  }
+  .ph-stats :global(span) {
+    font-size: 13.5px;
+    line-height: 1.35;
+    color: #c8d8cd;
+  }
+  .ph-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+    animation: ph-up 0.8s var(--ease) 0.85s both;
+  }
+  .ph-visual {
+    margin: 0;
+    animation: ph-pop 1s var(--ease) 0.4s both;
+  }
+  .ph-visual img {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+  }
+  .ph-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    color: var(--green-2);
+  }
+
+  @keyframes ph-word {
+    from {
+      transform: translateY(105%);
+    }
+  }
+  @keyframes ph-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+  @keyframes ph-pop {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.96);
+      filter: blur(6px);
+    }
+  }
+
+  @media (max-width: 1080px) {
+    .ph-grid {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    .ph-visual {
+      max-width: 640px;
+    }
+  }
+  @media (max-width: 767px) {
+    .ph {
+      padding-top: 16px;
+    }
+    .ph-lead {
+      font-size: 16px;
+    }
+    .ph-stats {
+      grid-template-columns: 1fr;
+    }
+    .ph-stats li {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .ph-stats :global(strong) {
+      font-size: 22px;
+      min-width: 4.5ch;
+    }
+    .ph-cta .btn {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+    .ph-status {
+      display: none;
+    }
+  }
+</style>
